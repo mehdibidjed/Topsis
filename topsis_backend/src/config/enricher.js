@@ -39,7 +39,33 @@ function getLastProcessedId() {
       return progress.lastId;
     }
   } catch (err) { }
-  return 2015; // Commencer à 2016 si pas de checkpoint
+  return 0; 
+}
+function generateGrid() {
+  const nord = 35.65;    // latitude max
+  const sud = 35.35;     // latitude min
+  const ouest = -1.1;   // longitude min
+  const est = -0.4;      // longitude max
+  const step = 0.013;
+  const points = [];
+  for (let lat = sud; lat <= nord; lat += step) {
+    for (let lng = ouest; lng <= est; lng += step) {
+      points.push({ lat, lng });
+    }
+  }
+  return points;
+}
+
+async function insertPoints(points) {
+  for (const p of points) {
+    await pool.query(
+      `INSERT INTO locations (lat, lng, geom)
+       VALUES ($1, $2, ST_SetSRID(ST_MakePoint($2, $1), 4326))
+       ON CONFLICT DO NOTHING`,
+      [p.lat, p.lng]
+    );
+  }
+  console.log(`Points inserted or already exist: ${points.length}`);
 }
 
 // ==========================
@@ -133,7 +159,7 @@ function getExposure(lat) {
 async function enrichLocations() {
   const lastId = getLastProcessedId();
 
-  // Récupérer les points à partir du dernier ID
+
   const { rows } = await pool.query(`
     SELECT * FROM locations 
     WHERE id > $1
@@ -197,13 +223,15 @@ async function enrichLocations() {
 // MAIN
 // ==========================
 async function main() {
-  console.log("=== ENRICHISSEMENT DES POINTS (à partir de l'ID 2016) ===\n");
+  console.log("=== ENRICHISSEMENT DES POINTS  ===\n");
 
   process.on('SIGINT', () => {
     console.log("\n\n⚠️ Arrêt demandé. La progression est sauvegardée dans progress.json");
     console.log("Relancez 'npm run enrich' pour continuer.");
     process.exit(0);
   });
+
+  await insertPoints(generateGrid());
 
   await enrichLocations();
   process.exit(0);

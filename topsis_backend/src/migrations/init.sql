@@ -1,0 +1,15 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+CREATE TABLE locations (
+    id SERIAL PRIMARY KEY,
+    lat DOUBLE PRECISION,
+    lng DOUBLE PRECISION,
+    geom geometry(Point, 4326),
+
+    vent DOUBLE PRECISION DEFAULT 0,
+    pente DOUBLE PRECISION DEFAULT 0,
+    habitations INTEGER DEFAULT 0,
+    exposition DOUBLE PRECISION DEFAULT 0,
+    altitude DOUBLE PRECISION DEFAULT 0
+
+);
