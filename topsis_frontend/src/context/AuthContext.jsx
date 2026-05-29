@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { loginUser, registerUser, loginWithGoogleApi } from '../api/auth';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const AuthContext = createContext(null);
 
@@ -34,31 +36,62 @@ export function AuthProvider({ children }) {
     // ── Login ──────────────────────────────────────────────────────────────────
     const login = useCallback(async (email, password) => {
         setLoading(true);
-        // STUB: Bypass backend for testing
-        setTimeout(() => {
-            persist({ id: 1, name: 'Test User', email }, 'fake-jwt-token-123');
+        try {
+            const data = await loginUser(email, password);
+            if (data.success) {
+                persist(data.user, data.token);
+                setLoading(false);
+                return { success: true };
+            }
             setLoading(false);
-        }, 500);
-        return { success: true };
+            return { success: false, message: data.message || 'Login failed' };
+        } catch (error) {
+            setLoading(false);
+            return { success: false, message: error.response?.data?.message || 'Login failed' };
+        }
     }, [persist]);
 
     // ── Register ───────────────────────────────────────────────────────────────
     const register = useCallback(async (name, email, password) => {
         setLoading(true);
-        // STUB: Bypass backend for testing
-        setTimeout(() => {
-            persist({ id: 1, name, email }, 'fake-jwt-token-123');
+        try {
+            const data = await registerUser(name, email, password);
+            if (data.success) {
+                persist(data.user, data.token);
+                setLoading(false);
+                return { success: true };
+            }
             setLoading(false);
-        }, 500);
-        return { success: true };
+            return { success: false, message: data.message || 'Registration failed' };
+        } catch (error) {
+            setLoading(false);
+            return { success: false, message: error.response?.data?.message || 'Registration failed' };
+        }
     }, [persist]);
 
     // ── Google OAuth ───────────────────────────────────────────────────────────
-    const loginWithGoogle = useCallback(() => {
-        window.location.href = 'http://localhost:3000/api/auth/google';
-    }, []);
+    const loginWithGoogle = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setLoading(true);
+            try {
+                // By default implicit flow gives access_token
+                const data = await loginWithGoogleApi(tokenResponse.access_token);
+                if (data.success) {
+                    persist(data.user, data.token);
+                }
+            } catch (error) {
+                console.error("Google Auth backend error:", error);
+            } finally {
+                setLoading(false);
+            }
+        },
+        onError: () => {
+            console.error('Login Failed');
+            setLoading(false);
+        }
+    });
 
-    // ── Handle OAuth callback (called from OAuthCallback page) ─────────────────
+    // ── Handle OAuth callback (called from OAuthCallback page strictly for dev purposes only if redirect existed) ─────────────────
     const handleOAuthCallback = useCallback((incomingToken, incomingUser) => {
         persist(incomingUser, incomingToken);
     }, [persist]);

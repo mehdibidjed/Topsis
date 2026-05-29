@@ -38,6 +38,10 @@ function getLastProcessedId() {
       console.log(`📌 Reprise à partir de l'ID ${progress.lastId + 1}`);
       return progress.lastId;
     }
+    else{
+      console.log("No progress file found, starting from scratch");
+      return 0;
+    }
   } catch (err) { }
   return 0; 
 }
@@ -231,7 +235,7 @@ async function main() {
     process.exit(0);
   });
 
-  await insertPoints(generateGrid());
+ // await insertPoints(generateGrid());
 
   await enrichLocations();
   process.exit(0);

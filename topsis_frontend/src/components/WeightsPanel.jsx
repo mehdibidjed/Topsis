@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 const WEIGHT_KEYS = ['wind', 'slope', 'habitations', 'exposure', 'altitude'];
 
@@ -46,6 +46,10 @@ export default function WeightsPanel({
     loading,
 }) {
     const [localWeights, setLocalWeights] = useState(weights);
+
+    useEffect(() => {
+        setLocalWeights(weights);
+    }, [weights]);
 
     const handleSliderChange = useCallback((key, rawValue) => {
         const updated = { ...localWeights, [key]: Number(rawValue) };

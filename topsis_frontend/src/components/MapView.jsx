@@ -104,7 +104,7 @@ function ResultMarkers({ results }) {
 
 /* ── Main MapView component ── */
 const MapView = forwardRef(function MapView(
-    { results, onPolygonComplete, drawnLayerRef },
+    { results, onPolygonComplete, drawnLayerRef, onDrawStateChange },
     ref
 ) {
     const flyToRef = useRef(null);
@@ -134,6 +134,7 @@ const MapView = forwardRef(function MapView(
             <DrawControl
                 onPolygonComplete={onPolygonComplete}
                 drawnLayerRef={drawnLayerRef}
+                onStateChange={onDrawStateChange}
             />
 
             {results.length > 0 && <ResultMarkers results={results} />}

@@ -22,7 +22,7 @@ export default function Signup() {
 
         const { success, message } = await register(name, email, password);
         if (success) {
-            navigate('/', { replace: true });
+            navigate('/dashboard', { replace: true });
         } else {
             setError(message);
         }
@@ -47,9 +47,7 @@ export default function Signup() {
                     disabled={loading}
                     className="w-full mb-6 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-medium text-sm text-slate-200 bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700 disabled:opacity-50"
                 >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                        <path fill="currentColor" fillRule="evenodd" d="M12.001 22.006c5.525 0 10.003-4.478 10.003-10.003c0-1.127-.187-2.21-.527-3.232H12.001v3.916h5.836a5.05 5.05 0 0 1-2.19 3.32v2.756h3.541c2.073-1.91 3.267-4.72 3.267-8.072c0-.853-.076-1.68-.222-2.48H12.001v5.776h3.332a3.003 3.003 0 0 1-1.303 1.97v1.64h2.106a7.994 7.994 0 0 0 0-14.935H12.001A8.001 8.001 0 1 0 12.001 22.006Z" clipRule="evenodd" />
-                    </svg>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/3840px-Google_%22G%22_logo.svg.png" alt="Google" className="w-5 h-5" />
                     Continue with Google
                 </button>
 

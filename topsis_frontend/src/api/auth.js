@@ -12,6 +12,11 @@ export async function registerUser(name, email, password) {
     return data; // { user, token }
 }
 
+export async function loginWithGoogleApi(idToken) {
+    const { data } = await axios.post(`${BASE}/google`, { idToken });
+    return data; // { user, token }
+}
+
 export async function getMe(token = null) {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const { data } = await axios.get(`${BASE}/me`, { headers });

@@ -33,7 +33,7 @@ export default function OAuthCallback() {
                 handleOAuthCallback(token, user);
 
                 // Redirect to protected dashboard
-                navigate('/', { replace: true });
+                navigate('/dashboard', { replace: true });
             } catch (err) {
                 console.error("OAuth callback error", err);
                 navigate('/login?error=Auth+Failed');

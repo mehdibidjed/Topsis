@@ -7,9 +7,9 @@ async function getTopsisResult(req, res) {
     const { polygon, weights } = req.body;
     console.log(polygon, weights);
     
-    if (!polygon || !Array.isArray(polygon) || polygon.length < 3) {
+    if (!polygon || !Array.isArray(polygon) || polygon.length !== 4) {
       return res.status(400).json({ 
-        error: "Invalid polygon: Please provide a polygon with at least 3 points" 
+        error: "Invalid polygon: Please provide a selection with exactly 4 points" 
       });
     }
     
